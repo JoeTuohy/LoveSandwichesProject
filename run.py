@@ -1,5 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
+from pprint import pprint
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -51,16 +52,6 @@ def validate_data(values):
     return True
 
 
-def update_sales_worksheet(data):
-    """
-    Update sales worksheet add new row with the list data provided
-    """
-    print("...updating sales worksheet...\n")
-    sales_worksheet = SHEET.worksheet("sales")
-    sales_worksheet.append_row(data)
-    print("Sales worksheet updated successfully\n")
-
-
 def calculate_surplus_data(sales_row):
     """
     Compare sales with stock and calculate the surplus for each item type
@@ -80,16 +71,6 @@ def calculate_surplus_data(sales_row):
     return surplus_data
 
 
-def update_surplus_worksheet(surplus_data):
-    """
-    Add data to the surplus sheet
-    """
-    print("...updating surplus worksheet...\n")
-    sales_worksheet = SHEET.worksheet("surplus")
-    sales_worksheet.append_row(surplus_data)
-    print("Surplus worksheet updated successfully\n")
-
-
 def update_worksheet(data, worksheet):
     """
     Receives a list of integers to be inserted into a worksheet
@@ -99,6 +80,20 @@ def update_worksheet(data, worksheet):
     worksheet_to_update = SHEET.worksheet(worksheet)
     worksheet_to_update.append_row(data)
     print(f"{worksheet} worksheet updated successfully\n")
+
+
+def get_last_5_entries_sales():
+    """
+    collects columns of data from sales worksheet
+    collects last 5 entries for each sandwich type
+    returns data as list
+    """
+    sales = SHEET.worksheet("sales")
+    columns = []
+    for ind in range(1, 7):
+        column = sales.col_values(ind)
+        columns.append(column[-5:])
+    return columns
 
 
 def main():
@@ -113,4 +108,5 @@ def main():
 
 
 print("Welcome to Love Sandwiches data automation")
-main()
+# main()
+sales_columns = get_last_5_entries_sales()
